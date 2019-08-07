@@ -37,7 +37,7 @@ CTraceDat::CTraceDat(const QString &fileName)
     bIsLoaded = true;
 }
 
-void CTraceDat::ProcessRecords(const IRecordConsumer &consumer)
+void CTraceDat::ProcessRecords(IRecordConsumer &consumer)
 {
     qDebug("======CTraceDat::ProcessRecords======");
     const uint64_t pageSize = 4096; // hard coded

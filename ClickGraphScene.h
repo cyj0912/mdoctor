@@ -12,8 +12,8 @@ class CClickGraphScene : public QGraphicsScene
 public:
     explicit CClickGraphScene(QObject *parent = nullptr);
 
-    CElementUI *GetElement(uint32_t eindex);
-    CElementUI *GetElement(const std::string &name);
+    CElementUI *GetElement(uint32_t eindex) const;
+    CElementUI *GetElement(const std::string &name) const;
     uint32_t CountElements() const
     {
         assert(ElementsByIndex.size() < UINT32_MAX);

@@ -18,7 +18,7 @@ CClickGraphScene::CClickGraphScene(QObject *parent)
     : QGraphicsScene(parent)
 {}
 
-CElementUI *CClickGraphScene::GetElement(uint32_t eindex)
+CElementUI *CClickGraphScene::GetElement(uint32_t eindex) const
 {
     auto iter = ElementsByIndex.find(eindex);
     if (iter == ElementsByIndex.end())
@@ -26,7 +26,7 @@ CElementUI *CClickGraphScene::GetElement(uint32_t eindex)
     return iter->second;
 }
 
-CElementUI *CClickGraphScene::GetElement(const std::string &name)
+CElementUI *CClickGraphScene::GetElement(const std::string &name) const
 {
     auto iter = ElementsByName.find(name);
     if (iter == ElementsByName.end())

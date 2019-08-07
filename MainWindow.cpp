@@ -51,6 +51,13 @@ CMainWindow::CMainWindow(QWidget *parent) :
     loadTraceDat->setText("trace.dat");
     ui->mainToolBar->addWidget(loadTraceDat);
     connect(loadTraceDat, &QToolButton::clicked, [=](bool) {
+        auto *view = findChild<CGraphicsView *>(OBJ_GRAPHICS_VIEW);
+        auto *scene = dynamic_cast<CClickGraphScene *>(view->scene());
+        if (!scene) {
+            ui->statusBar->showMessage("No click config loaded, cannot proceed.");
+            return;
+        }
+
         QString fileName = QFileDialog::getOpenFileName(this,
                                                         tr("Open trace.dat"),
                                                         "",
@@ -60,9 +67,24 @@ CMainWindow::CMainWindow(QWidget *parent) :
             return;
         }
         CTraceDat parser(fileName);
-        CTraceEventClick eventConsumer;
-        parser.ProcessRecords(eventConsumer);
         qDebug("bIsLoaded=%d", parser.IsLoaded());
+        if (!parser.IsLoaded()) {
+            ui->statusBar->showMessage("trace.dat loading failed");
+            return;
+        }
+        auto *eventConsumer = new CPacketTraceModel(scene);
+        parser.ProcessRecords(*eventConsumer);
+        auto *model = new CPacketTraceSorter();
+        model->setSourceModel(eventConsumer);
+
+        // Setup filter box
+        ui->packetsFilter->clear();
+        connect(ui->packetsFilter, &QLineEdit::editingFinished, [this]() {
+            auto *sorter = static_cast<CPacketTraceSorter *>(ui->packetsTable->model());
+            sorter->SetFilterString(ui->packetsFilter->text());
+        });
+
+        ui->packetsTable->setModel(model);
     });
 #endif
 }

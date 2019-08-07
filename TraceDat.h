@@ -8,7 +8,7 @@
 class IRecordConsumer
 {
 public:
-    virtual void Consume(double timestamp, void *data, size_t len) const = 0;
+    virtual void Consume(double timestamp, void *data, size_t len) = 0;
 
 protected:
     ~IRecordConsumer() = default;
@@ -32,7 +32,7 @@ public:
 
     bool IsLoaded() const { return bIsLoaded; }
 
-    void ProcessRecords(const IRecordConsumer &consumer);
+    void ProcessRecords(IRecordConsumer &consumer);
 
 protected:
     QString ReadString();
