@@ -9,6 +9,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 
+set(CMAKE_MACOSX_BUNDLE ON)
+
 find_package(Qt5 COMPONENTS Widgets Concurrent REQUIRED)
 
 set(MDOCTOR_SOURCES
@@ -43,4 +45,29 @@ set(MDOCTOR_SOURCES
     TraceEventClick.h
 )
 add_executable(mdoctor WIN32 ${MDOCTOR_SOURCES})
+set_target_properties(mdoctor PROPERTIES
+    MACOSX_BUNDLE_BUNDLE_NAME mdoctor
+    MACOSX_BUNDLE_BUNDLE_VERSION 1.0.2
+    MACOSX_BUNDLE_COPYRIGHT "All rights reserved"
+    MACOSX_BUNDLE_GUI_IDENTIFIER com.meraki.tchen.mdoctor
+    #MACOSX_BUNDLE_ICON_FILE
+    #MACOSX_BUNDLE_INFO_STRING
+    #MACOSX_BUNDLE_LONG_VERSION_STRING
+    #MACOSX_BUNDLE_SHORT_VERSION_STRING
+)
 target_link_libraries(mdoctor Qt5::Widgets Qt5::Concurrent)
+
+# Installation
+install(TARGETS mdoctor
+    BUNDLE DESTINATION .
+)
+include(InstallRequiredSystemLibraries)
+
+# Packaging
+set(CPACK_PACKAGE_NAME "mdoctor")
+set(CPACK_PACKAGE_VENDOR "Meraki")
+set(CPACK_PACKAGE_VERSION_MAJOR 1)
+set(CPACK_PACKAGE_VERSION_MINOR 0)
+set(CPACK_PACKAGE_VERSION_PATCH 2)
+set(CPACK_GENERATOR DragNDrop 7Z)
+include(CPack)
