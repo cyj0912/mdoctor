@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QPixmapCache>
 #include <QPushButton>
+#include <QSizePolicy>
 #include <QTextStream>
 #include <QToolButton>
 #include <QtDebug>
@@ -46,7 +47,6 @@ CMainWindow::CMainWindow(QWidget *parent) :
              << "Count";
     ui->pathTable->setHorizontalHeaderLabels(headings);
 
-#if 1
     QToolButton *loadTraceDat = new QToolButton();
     loadTraceDat->setText("trace.dat");
     ui->mainToolBar->addWidget(loadTraceDat);
@@ -85,8 +85,23 @@ CMainWindow::CMainWindow(QWidget *parent) :
         });
 
         ui->packetsTable->setModel(model);
+
+        // Setup context menu for the view
+        ui->packetsTable->setContextMenuPolicy(Qt::CustomContextMenu);
+        connect(ui->packetsTable, &QTableView::customContextMenuRequested, [=](const QPoint &pos) {
+            QModelIndex proxyIndex = ui->packetsTable->indexAt(pos);
+            QModelIndex index = model->mapToSource(proxyIndex);
+            auto globalPos = ui->packetsTable->viewport()->mapToGlobal(pos);
+            QMenu menu;
+            QAction *ac1 = menu.addAction("Select Path");
+            connect(ac1, &QAction::triggered, [=]() {
+                auto eindexList = eventConsumer->GetElementsOnPath(index);
+                scene->SelectPath(eindexList);
+            });
+            QAction *ac2 = menu.addAction("Copy SRC IP Filter");
+            menu.exec(globalPos);
+        });
     });
-#endif
 }
 
 CMainWindow::~CMainWindow()
@@ -124,6 +139,18 @@ void CMainWindow::InitTargetToolbar()
         }
     });
     ui->targetToolBar->addWidget(fetchHistogram);
+
+    QLabel *durationLabel = new QLabel("Duration:");
+    QLineEdit *durationEdit = new QLineEdit();
+    durationEdit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    durationEdit->setFixedWidth(20);
+    durationEdit->setText("5");
+    QPushButton *startDetailedTrace = new QPushButton();
+    startDetailedTrace->setText("Detailed Capture");
+
+    ui->targetToolBar->addWidget(durationLabel);
+    ui->targetToolBar->addWidget(durationEdit);
+    ui->targetToolBar->addWidget(startDetailedTrace);
 }
 
 void CMainWindow::UpdateTarget(QString targetStr)

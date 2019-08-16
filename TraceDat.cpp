@@ -55,6 +55,7 @@ void CTraceDat::ProcessRecords(IRecordConsumer &consumer)
 
             auto *pTimestamp = reinterpret_cast<uint64_t *>(&buf[0]);
             auto *pPageLen = reinterpret_cast<uint64_t *>(&buf[8]);
+            uint64_t pageTs = *pTimestamp;
 
             qDebug("%llu %llu", *pTimestamp, *pPageLen);
             uint64_t recordOff = 0;
@@ -81,7 +82,7 @@ void CTraceDat::ProcessRecords(IRecordConsumer &consumer)
                     break;
                 default:
                     recordLen = type * 4;
-                    consumer.Consume(0.0, &buf[16 + recordOff + 4], recordLen);
+                    consumer.Consume(pageTs + delta, &buf[16 + recordOff + 4], recordLen);
                     break;
                 }
                 recordOff += 4; // for DeltaAndType

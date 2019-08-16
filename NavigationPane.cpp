@@ -167,10 +167,10 @@ void CNavigationPane::RefreshFromSceneSelection()
     DisplayElement(element);
 }
 
-void CNavigationPane::UpdatePanToListFromPath(uint32_t pathIndex)
+void CNavigationPane::UpdatePanToListFromPath(const std::vector<uint32_t> &elements)
 {
     PanToEdit->clear();
-    for (uint32_t eindex : Scene->GetPaths()[pathIndex].Elements) {
+    for (uint32_t eindex : elements) {
         auto *element = Scene->GetElement(eindex);
         auto *item = new QListWidgetItem(QString::fromStdString(element->GetName()), PanToEdit);
         item->setData(Qt::UserRole, element->GetEIndex());

@@ -51,10 +51,11 @@ public:
     std::vector<uint32_t> CompletePath(const std::vector<uint32_t> &elems);
     void AddPathWithCount(const std::vector<uint32_t> &elems, size_t count);
     void SelectPath(uint32_t pathIndex);
+    void SelectPath(const std::vector<uint32_t> &elements);
     const std::vector<CPath> &GetPaths() const { return Paths; }
 
 signals:
-    void PathSelectionChanged(uint32_t pathIndex);
+    void PathSelectionChanged(const std::vector<uint32_t> &elements);
 
 private:
     std::unordered_map<uint32_t, CElementUI *> ElementsByIndex;

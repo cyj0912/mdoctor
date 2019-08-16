@@ -255,7 +255,16 @@ void CClickGraphScene::SelectPath(uint32_t pathIndex)
     for (uint32_t eindex : Paths[pathIndex].Elements) {
         ElementsByIndex[eindex]->setSelected(true);
     }
-    emit PathSelectionChanged(pathIndex);
+    emit PathSelectionChanged(Paths[pathIndex].Elements);
+}
+
+void CClickGraphScene::SelectPath(const std::vector<uint32_t> &elements)
+{
+    clearSelection();
+    for (uint32_t eindex : elements) {
+        ElementsByIndex[eindex]->setSelected(true);
+    }
+    emit PathSelectionChanged(elements);
 }
 
 QString CClickGraphScene::CPath::ToString(CClickGraphScene *scene) const

@@ -24,7 +24,7 @@ signals:
 
 public slots:
     void RefreshFromSceneSelection();
-    void UpdatePanToListFromPath(uint32_t pathIndex);
+    void UpdatePanToListFromPath(const std::vector<uint32_t> &elements);
 
 private:
     QFormLayout *Layout;

@@ -15,6 +15,8 @@ void CPacketTraceModel::Consume(double timestamp, void *data, size_t len)
     if (c->common_type != 285)
         return;
 
+    qDebug("%f", timestamp);
+
     const auto *packetHeader = static_cast<const CEventDumpHeader *>(c);
 
     EventStore.push_back(*packetHeader);
@@ -93,6 +95,29 @@ QVariant CPacketTraceModel::headerData(int section, Qt::Orientation orientation,
         }
     }
     return {};
+}
+
+std::vector<uint32_t> CPacketTraceModel::GetElementsOnPath(const QModelIndex &index) const
+{
+    assert(index.isValid());
+    int row = index.row();
+    assert(row < EventStore.size());
+
+    auto skbAddr = EventStore.at(row).skbaddr;
+
+    int row2 = row;
+    while (row >= 0 && EventStore.at(row).skbaddr == skbAddr)
+        row--;
+    row++;
+
+    while (row2 < EventStore.size() && EventStore.at(row2).skbaddr == skbAddr)
+        row2++;
+    row2--;
+
+    std::vector<uint32_t> result;
+    for (int i = row; i <= row2; i++)
+        result.push_back(EventStore.at(i).eindex);
+    return result;
 }
 
 QString CPacketTraceModel::ConvertIPToStringBE(uint32_t ip)

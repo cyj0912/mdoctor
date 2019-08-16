@@ -5,6 +5,7 @@
 #include <QSortFilterProxyModel>
 
 #include <map>
+#include <vector>
 
 class CClickGraphScene;
 class CPacketTraceModel;
@@ -43,6 +44,8 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+
+    std::vector<uint32_t> GetElementsOnPath(const QModelIndex &index) const;
 
     static QString ConvertIPToStringBE(uint32_t ip);
     static QString ConvertMACToString(const uint8_t mac[6]);
