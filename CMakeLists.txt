@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15.0)
+cmake_minimum_required(VERSION 3.12.0)
 
 project(mdoctor)
 
@@ -57,8 +57,27 @@ set_target_properties(mdoctor PROPERTIES
 )
 target_link_libraries(mdoctor Qt5::Widgets Qt5::Concurrent)
 
+get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
+get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
+find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
+find_program(MACDEPLOYQT_EXECUTABLE macdeployqt HINTS "${_qt_bin_dir}")
+if(WINDEPLOYQT_EXECUTABLE)
+add_custom_command(TARGET mdoctor POST_BUILD
+    COMMAND "${CMAKE_COMMAND}" -E env PATH="${_qt_bin_dir}"
+        "${WINDEPLOYQT_EXECUTABLE}" "$<TARGET_FILE:mdoctor>"
+    COMMENT "Running windeployqt"
+)
+endif()
+if(MACDEPLOYQT_EXECUTABLE)
+add_custom_command(TARGET mdoctor POST_BUILD
+    COMMAND "${MACDEPLOYQT_EXECUTABLE}" "$<TARGET_BUNDLE_DIR:mdoctor>" -always-overwrite
+    COMMENT "Running macdeployqt"
+)
+endif()
+
 # Installation
 install(TARGETS mdoctor
+    RUNTIME DESTINATION bin
     BUNDLE DESTINATION .
 )
 include(InstallRequiredSystemLibraries)

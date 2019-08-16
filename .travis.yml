@@ -1,0 +1,33 @@
+language: cpp
+matrix:
+  include:
+  - os: osx
+    osx_image: xcode10.3
+    addons:
+      homebrew:
+        packages:
+        - cmake
+        - qt
+        update: true
+    env:
+    - PATH="/usr/local/opt/qt/bin:$PATH"
+  - os: linux
+    dist: bionic
+    addons:
+      apt:
+        packages:
+        - qt5-default
+        - qt5-qmake
+
+script:
+- cmake . && make && make package
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "dEM1wTAUJYhfL2ScV6nx0C012EWW94siDopg7Isg0WfUz3sc2DhdcJCRgK072gNjSWXn4c/6QLEgrZgaKdKLxn0VhCIWYZR9NN245lksv6ZMWazbF6AVb+q5Syq8LYS/GSUvAyeS9jP4w8mrY95fcGwJOE1azfB8MQANEThpv0ZN66VWQreZA9YDKbM0wICCCcpP52mWk4qD5KPS7b7ENIHRnvUqj5jHAypuV/cXxk96JL0b+twRKO/ojfsKv9sqK4uS/hjIt7b1bK+yLG3qN0iHGvg/cEdrY+QMCnNyiIeT9AAKCbGYbkeZDkKNXsb1wmttJbWrnpY2g9AfCC32IunIobzt/tB1oiNGw3sROlID8zrRUNReLYNrtZUT1S9V7qTksFHC+2O/TmoFk8/KXFRRcCPH00z/dIVvSj/KIw9ihvc5H1RX0KQ10EmPkovl726pXyQLVs0NcL1m8YUPTpRdSu1TMIYxzvNdOR6C8ls7v24NADdC4ht+3p7zm8pJPM0x/IHyBRtJaEa6POq5ZO/ujkhqtMh5K48mwy0d1A7aUTl4o06V/nU1IH27gfprj7WxBF15iXveeB86aimSoffqmtaRf6Aw7w7STZZf4TD3DxUwF8rWuUjZDiCmioRkZbptz7HYFc0woYpfegNNOdok1SUCHil4sH0YrxJQzrY="
+  file_glob: true
+  file: "mdoctor-*"
+  skip_cleanup: true
+  on:
+    tags: true
